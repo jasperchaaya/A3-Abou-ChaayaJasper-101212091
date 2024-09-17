@@ -20,19 +20,6 @@ public class Deck {
         return cards.size();
     }
 
-    //Shuffles the deck
-    public void shuffle() {
-        Collections.shuffle(cards);
-    }
-
-    //Draws first card from the deck
-    public Card draw() {
-        if (!cards.isEmpty()) {
-            return cards.removeFirst();
-        }
-        return null;
-    }
-
     // Returns the current list of cards in the deck
     public List<Card> getCards() {
         return cards;
