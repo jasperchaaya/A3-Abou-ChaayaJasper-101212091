@@ -1,22 +1,23 @@
-package org.example;
+package game.quests;
 
-import java.util.ArrayList;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class Maintest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class MainTest {
 
     @Test
-    @DisplayName("Check to see if decks are initialized")
+    @DisplayName("Check to see if both decks are initialized")
     void R_1_test(){
-        Main game = new Main();
+        Game game = new Game();
         game.initializeDecks();
 
         //Test 1 - checking event deck and adventure deck
         int eventDeckSize = game.getEventDeckSize();
         int adventureDeckSize = game.getAdventureDeckSize();
 
-            //checking total cards
+        //Checking total number of cards for both decks
         assertEquals(17,eventDeckSize);
         assertEquals(100,adventureDeckSize);
 
