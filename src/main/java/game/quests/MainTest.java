@@ -4,13 +4,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MainTest {
 
     @Test
     @DisplayName("R1-Check to see if both decks are initialized")
     void R_1_test(){
-        Game game = new Game();
+        Game game = new Game(4);
         game.initializeDecks();
 
         //Test 1 - checking event deck and adventure deck
@@ -32,7 +33,7 @@ public class MainTest {
     @DisplayName("R2-Check to see player(s) are created, given 12 Adventure cards each, " +
             "and check if cards are taken out of Adventure deck")
     void R_2_test() {
-        Game game = new Game();
+        Game game = new Game(4);
         game.initializeDecks();
 
         //Initialize 4 players
@@ -47,11 +48,6 @@ public class MainTest {
         assertEquals(4, players.length);
         System.out.println("Passed.");
 
-        //Distribute 12 cards to each player
-        for (Player player : players) {
-            game.distributeCards(player, "Adventure" ,12);
-        }
-
         //R2 - Check if each player is given 12 Adventure cards
         System.out.print("R2, Checking if each player has 12 adventure cards: ");
         for (Player player : players) {
@@ -62,8 +58,9 @@ public class MainTest {
         //R2 - Check if the cards are taken out from the Adventure deck
         int remainingAdventureDeckSize = game.getAdventureDeckSize();
         System.out.print("R2, Checking if cards were taken out from the Adventure deck: ");
-        assertEquals(100 - (player.size() * 12), remainingAdventureDeckSize);
+        assertEquals(100 - (players.length * 12), remainingAdventureDeckSize);
         System.out.println("Expected 52, found " + remainingAdventureDeckSize);
     }
+
 
 }
