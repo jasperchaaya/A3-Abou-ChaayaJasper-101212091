@@ -5,6 +5,12 @@ import java.util.*;
 public class Game {
     private Deck adventureDeck;
     private Deck eventDeck;
+    private Player[] players;
+
+    public Game(int numberOfPlayers){
+        initializeDecks();
+        initializePlayers(numberOfPlayers);
+    }
 
     public void initializeDecks() {
         adventureDeck = new Deck();
@@ -35,6 +41,7 @@ public class Game {
             deck.add(new Card(type, value));
         }
     }
+
     private void addEventCards(List<Card> deck,String type, int stage, int count) {
         for (int i = 0; i < count; i++) {
             if(stage>0){
@@ -49,7 +56,7 @@ public class Game {
     private List<Card> initializeAdventureCards() {
         List<Card> adventureCards = new ArrayList<>();
 
-        // Add F (Foe) cards
+        //Add F (Foe) cards
         addAdventureCards(adventureCards,"F", 5, 8);
         addAdventureCards(adventureCards, "F",10, 7);
         addAdventureCards(adventureCards,"F", 15, 8);
@@ -61,7 +68,7 @@ public class Game {
         addAdventureCards(adventureCards,"F", 50, 2);
         addAdventureCards(adventureCards,"F", 70, 1);
 
-        // Add Weapon cards
+        //Add Weapon cards
         addAdventureCards(adventureCards, "D", 5, 6);   //6 daggers with value 5
         addAdventureCards(adventureCards, "H", 10, 12); //12 horses with value 10
         addAdventureCards(adventureCards, "S", 10, 16); //16 swords
@@ -73,22 +80,35 @@ public class Game {
     }
 
     private List<Card> initializeEventCards() {
-        // Add 17 event cards (12 Q cards, 5 E cards)
+        //Add 17 event cards (12 Q cards, 5 E cards)
         List<Card> eventCards = new ArrayList<>();
 
-        // Add Q cards (quests)
+        //Add Q cards (quests)
         addEventCards(eventCards,"Q", 2, 3);  //3 Q2 cards with 2 stages
         addEventCards(eventCards,"Q",3, 4);  //4 Q3 cards with 3 stages
         addEventCards(eventCards,"Q",4, 3);  //3 Q4 cards with 4 stages
         addEventCards(eventCards,"Q",5, 2);  //2 Q5 cards with 5 stages
 
-        // Add E cards (events)
+        //Add E cards (events)
         addEventCards(eventCards, "Plague",0,1);
         addEventCards(eventCards, "Queen's Favor",0,2);
         addEventCards(eventCards, "Prosperity",0,2);
 
         return eventCards;
     }
+
+    public void initializePlayers(int numberOfPlayers) {
+        players = new Player[numberOfPlayers];
+        for (int i = 0; i < numberOfPlayers; i++) {
+            players[i] = new Player("Player " + (i + 1),adventureDeck.draw(12));
+        }
+    }
+
+    public Player[] getPlayers() {
+        return players;
+    }
+
+
 }
 
 
