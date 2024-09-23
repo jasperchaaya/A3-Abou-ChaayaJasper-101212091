@@ -2,7 +2,7 @@ package game.quests;
 
 public class Main {
     public static void main(String[] args) {
+        System.out.println("Hello and welcome to the Quests game!");
 
-        System.out.print("Hello and welcome!");
     }
 }

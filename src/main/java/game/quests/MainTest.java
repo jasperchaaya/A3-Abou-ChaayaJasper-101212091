@@ -126,7 +126,7 @@ public class MainTest {
             System.out.println("Passed.");
 
         }else if (card.getType().equals("Q")){
-            System.out.print("R3, Checking if Quest card offers sponsorship: ");
+            System.out.println("R3, Checking if Quest card offers sponsorship: ");
             assertTrue(game.isSponsorshipOffered());
             System.out.println("Passed.");
 

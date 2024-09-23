@@ -1,8 +1,8 @@
 package game.quests;
 
 public class Card {
-    private String type;  // Type of card
-    private int value;    // Value of  card
+    private final String type;  // Type of card
+    private final int value;    // Value of  card
 
     public Card(String type, int value) {
         this.type = type;
@@ -19,6 +19,6 @@ public class Card {
     }
 
     public String toString() {
-        return type + " (Value: " + value + ")";
+        return type + " " + value;
     }
 }

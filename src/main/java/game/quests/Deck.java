@@ -48,6 +48,11 @@ public class Deck {
         return drawnCards;
     }
 
+    public void print(){
+        for(Card card : cards){
+            System.out.println(card.toString());
+        }
+    }
 
 }
 

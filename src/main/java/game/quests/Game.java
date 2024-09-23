@@ -1,15 +1,20 @@
 package game.quests;
 
 import java.util.*;
+import java.util.Scanner;
+
 
 public class Game {
     private Deck adventureDeck;
     private Deck eventDeck;
     private Player[] players;
+    private int currentPlayer;
+    private final int maxHandSize = 12;
 
     public Game(int numberOfPlayers){
         initializeDecks();
         initializePlayers(numberOfPlayers);
+        currentPlayer = 0;
     }
 
     public void initializeDecks() {
@@ -57,24 +62,24 @@ public class Game {
         List<Card> adventureCards = new ArrayList<>();
 
         //Add F (Foe) cards
-        addAdventureCards(adventureCards,"F", 5, 8);
-        addAdventureCards(adventureCards, "F",10, 7);
-        addAdventureCards(adventureCards,"F", 15, 8);
-        addAdventureCards(adventureCards,"F", 20, 7);
-        addAdventureCards(adventureCards,"F", 25, 7);
-        addAdventureCards(adventureCards,"F", 30, 4);
-        addAdventureCards(adventureCards,"F", 35, 4);
-        addAdventureCards(adventureCards,"F", 40, 2);
-        addAdventureCards(adventureCards,"F", 50, 2);
-        addAdventureCards(adventureCards,"F", 70, 1);
+        addAdventureCards(adventureCards,"F",5, 8);
+        addAdventureCards(adventureCards,"F",10,7);
+        addAdventureCards(adventureCards,"F",15,8);
+        addAdventureCards(adventureCards,"F",20,7);
+        addAdventureCards(adventureCards,"F",25,7);
+        addAdventureCards(adventureCards,"F",30,4);
+        addAdventureCards(adventureCards,"F",35,4);
+        addAdventureCards(adventureCards,"F",40,2);
+        addAdventureCards(adventureCards,"F",50,2);
+        addAdventureCards(adventureCards,"F",70,1);
 
         //Add Weapon cards
-        addAdventureCards(adventureCards, "D", 5, 6);   //6 daggers with value 5
-        addAdventureCards(adventureCards, "H", 10, 12); //12 horses with value 10
-        addAdventureCards(adventureCards, "S", 10, 16); //16 swords
-        addAdventureCards(adventureCards, "B", 15, 8);  //8 battle-axes
-        addAdventureCards(adventureCards, "L", 20, 6);  //6 lances
-        addAdventureCards(adventureCards, "E", 30, 2);  //2 excaliburs
+        addAdventureCards(adventureCards, "D",5,6);   //6 daggers with value 5
+        addAdventureCards(adventureCards, "H",10,12); //12 horses with value 10
+        addAdventureCards(adventureCards, "S",10,16); //16 swords
+        addAdventureCards(adventureCards, "B",15,8);  //8 battle-axes
+        addAdventureCards(adventureCards, "L",20,6);  //6 lances
+        addAdventureCards(adventureCards, "E",30,2);  //2 excaliburs
 
         return adventureCards;
     }
@@ -90,9 +95,9 @@ public class Game {
         addEventCards(eventCards,"Q",5, 2);  //2 Q5 cards with 5 stages
 
         //Add E cards (events)
-        addEventCards(eventCards, "Plague",0,1);
-        addEventCards(eventCards, "Queen's Favor",0,2);
-        addEventCards(eventCards, "Prosperity",0,2);
+        addEventCards(eventCards, "Plague",0,1);        //Lose 2 shields
+        addEventCards(eventCards, "Queen's Favor",0,2); //Player draws 2 A cards
+        addEventCards(eventCards, "Prosperity",0,2);    //All players draw 2 A cards
 
         return eventCards;
     }
@@ -100,7 +105,7 @@ public class Game {
     public void initializePlayers(int numberOfPlayers) {
         players = new Player[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
-            players[i] = new Player("Player " + (i + 1),adventureDeck.draw(12));
+            players[i] = new Player("Player " + (i + 1),adventureDeck.draw(12),maxHandSize);
         }
     }
 
@@ -108,6 +113,32 @@ public class Game {
         return players;
     }
 
+    public Player getCurrentPlayer(){
+        return players[currentPlayer];
+    }
+
+    public void handleEvent(Card card){
+
+    }
+
+    public boolean isSponsorshipOffered(){
+        Player current = getCurrentPlayer();
+        //Scanner scanner = new Scanner(System.in);  // Create a scanner object to read input
+        for(Player p : players){
+            if(!p.equals(current)) {
+                //Prompt player if they wish to sponsor
+                System.out.println(p.getName() + ", Do you want to sponsor the event? Y/N");
+                String input = System.console().readLine();
+                //System.out.println(opt);
+                //String input = scanner.nextLine();
+                if (input.equalsIgnoreCase("Y")) {
+                    //player wishes to sponsor, return true
+                    return true;
+                }
+            }
+        }
+        return false; //no one sponsor
+    }
 
 }
 
