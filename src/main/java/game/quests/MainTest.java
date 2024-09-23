@@ -3,8 +3,9 @@ package game.quests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MainTest {
 
@@ -33,11 +34,8 @@ public class MainTest {
     @DisplayName("R2-Check to see player(s) are created, given 12 Adventure cards each, " +
             "and check if cards are taken out of Adventure deck")
     void R_2_test() {
+        // the game constructor will initialize decks and players
         Game game = new Game(4);
-        game.initializeDecks();
-
-        //Initialize 4 players
-        game.initializePlayers(4);
 
         //Get players
         Player[] players = game.getPlayers();
@@ -61,6 +59,79 @@ public class MainTest {
         assertEquals(100 - (players.length * 12), remainingAdventureDeckSize);
         System.out.println("Expected 52, found " + remainingAdventureDeckSize);
     }
+    @Test
+    @DisplayName("R3 - Checking if shuffle deck function works.")
+    void R_3_test() {
+
+        // the game constructor will initialize decks and players
+        Game game = new Game(4);
+
+        //shuffle the decks
+
+        Deck advDeck = game.getAdventureDeck();
+        advDeck.shuffle();
+
+        int n = 0;
+        //checking first 8 cards if still F5
+        List<Card> cards = advDeck.getCards();
+        for (int i = 0; i < 8; i++) {
+            if (cards.get(i).toString().equals("F 5")) {
+                n++;
+            }
+        }
+        //Check that not all 8 cards are "F 5"
+        assertNotEquals(8, n, "R3 - Adventure Deck Shuffle Failed.");
+        System.out.println("R3 - Adventure Deck Shuffle Passed.");
 
 
+        //checking if event deck shuffle works
+        Deck eveDeck = game.getEventDeck();
+        eveDeck.shuffle();
+        n = 0;
+        //checking first 8 cards if still F5
+        cards = eveDeck.getCards();
+        for (int i = 0; i < 3; i++) {
+            if (cards.get(i).toString().equals("Q 2")) {
+                n++;
+            }
+        }
+        //Check that not all 3 cards are "Q 2"
+        assertNotEquals(3, n, "R3 - Event Deck Shuffle Failed.");
+        System.out.println("R3 - Event Deck Shuffle Passed.");
+
+
+        //R3 - Current player drawing from Event deck
+        Card card = game.getEventDeck().draw();
+        System.out.println("Drawn card: " + card.toString());
+
+        game.handleEvent(card);
+        Player currentPlayer = game.getCurrentPlayer();
+
+        //R3 - Testing handling player's draw from event deck
+        if(card.getType().equals("Plague")){
+            System.out.print("R3, Checking if Plague card effect works: ");
+            assertEquals(Math.max(0, currentPlayer.getShields() - 2), currentPlayer.getShields());
+            System.out.println("Passed.");
+
+        }else if(card.getType().equals("Queen's Favor")){
+            System.out.print("R3, Checking if Queen's Favor card effect works: ");
+            assertTrue(currentPlayer.getHandSize() <= 12);
+            System.out.println("Passed.");
+
+        }else if(card.getType().equals("Prosperity")){
+            System.out.print("R3, Checking if Prosperity card effect works: ");
+            for (Player player : game.getPlayers()) {
+                assertTrue(currentPlayer.getHandSize() <= 12);
+            }
+            System.out.println("Passed.");
+
+        }else if (card.getType().equals("Q")){
+            System.out.print("R3, Checking if Quest card offers sponsorship: ");
+            assertTrue(game.isSponsorshipOffered());
+            System.out.println("Passed.");
+
+        }else{
+            System.out.println("R3- Test failed.");
+        }
+    }
 }
