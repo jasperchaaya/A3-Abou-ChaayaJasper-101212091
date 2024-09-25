@@ -6,13 +6,14 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MainTest {
 
     @Test
     @DisplayName("R1-Check to see if both decks are initialized")
     void R_1_test(){
-        Game game = new Game(4);
+        Game game = new Game(4, false);
         game.initializeDecks();
 
         //Test 1 - checking event deck and adventure deck
@@ -35,7 +36,7 @@ public class MainTest {
             "and check if cards are taken out of Adventure deck")
     void R_2_test() {
         // the game constructor will initialize decks and players
-        Game game = new Game(4);
+        Game game = new Game(4, false);
 
         //Get players
         Player[] players = game.getPlayers();
@@ -60,14 +61,13 @@ public class MainTest {
         System.out.println("Expected 52, found " + remainingAdventureDeckSize);
     }
     @Test
-    @DisplayName("R3 - Checking if shuffle deck function works.")
+    @DisplayName("R3 - Checking if shuffle deck function works and event cards work.")
     void R_3_test() {
 
-        // the game constructor will initialize decks and players
-        Game game = new Game(4);
+        //The game constructor will initialize decks and players
+        Game game = new Game(4, false);
 
         //shuffle the decks
-
         Deck advDeck = game.getAdventureDeck();
         advDeck.shuffle();
 
@@ -134,4 +134,35 @@ public class MainTest {
             System.out.println("R3- Test failed.");
         }
     }
+
+    @Test
+    @DisplayName("R4 - Initiate player's turn and display their hand")
+    void R_4_test() {
+        //The game constructor will initialize decks and players
+        Game game = new Game(4, true);
+
+        //Start the first player's turn
+        Player currentPlayer = game.getCurrentPlayer();
+
+        //Check if the correct player is taking their turn and that player is not null
+        System.out.print("R4, Checking if it's the correct player's turn: ");
+        assertNotNull(currentPlayer);
+        System.out.println("It's " + currentPlayer.getName() + "'s turn.");
+
+        for(int n=0;n<4;n++){
+            currentPlayer.printHand();
+
+            System.out.print("R4, Checking if current player is changing, then display hand");
+            assertEquals("Player " + ((int)n+1),currentPlayer.getName());
+
+            assertEquals(12, currentPlayer.getHandSize());
+            System.out.println("Player's hand contains " + currentPlayer.getHandSize() + " cards. ");
+
+            System.out.println("==============================");
+            game.endTurn();
+            currentPlayer = game.getCurrentPlayer();
+        }
+    }
+
+
 }
