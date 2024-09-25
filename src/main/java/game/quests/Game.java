@@ -11,10 +11,14 @@ public class Game {
     private int currentPlayer;
     private final int maxHandSize = 12;
 
-    public Game(int numberOfPlayers){
-        initializeDecks();
-        initializePlayers(numberOfPlayers);
+    public Game(int numberOfPlayers, boolean shuffle){
         currentPlayer = 0;
+        initializeDecks();
+        if(shuffle) {
+            adventureDeck.shuffle();
+            eventDeck.shuffle();
+        }
+        initializePlayers(numberOfPlayers);
     }
 
     public void initializeDecks() {
@@ -117,27 +121,92 @@ public class Game {
         return players[currentPlayer];
     }
 
-    public void handleEvent(Card card){
+    public void handleEvent(Card event) {
+        String cardType = event.getType();
 
+        switch (cardType) {
+            case "Plague":
+                //Player will lose 2 shields
+                Player currentPlayer = getCurrentPlayer();
+                System.out.println("Player " + currentPlayer.getName() + " has drawn a Plague card!");
+                currentPlayer.addShields(Math.max(0, currentPlayer.getShields() - 2));      //Player can't have less than 0 shields
+                System.out.println("Player " + currentPlayer.getName() + " now has " + currentPlayer.getShields() + " shields.");
+                break;
+
+            case "Queen's Favor":
+                //Player draws 2 A cards
+                currentPlayer = getCurrentPlayer();
+                System.out.println("Player " + currentPlayer.getName() + " has drawn a Queen's Favor!");
+                List<Card> drawnCards = adventureDeck.draw(2);
+                currentPlayer.addCard(drawnCards.get(0));
+                currentPlayer.addCard(drawnCards.get(1));
+                System.out.println("Player " + currentPlayer.getName() + " now has " + currentPlayer.getHandSize() + " cards.");
+                break;
+
+            case "Prosperity":
+                //All players draw 2 A cards
+                currentPlayer = getCurrentPlayer();
+                System.out.println("Player " + currentPlayer.getName() + " has drawn a Prosperity card!");
+                System.out.println("All players draw 2 Adventure cards!");
+                for (Player player : players) {
+                    List<Card> advCards = adventureDeck.draw(2);
+                    player.addCard(advCards.get(0));
+                    player.addCard(advCards.get(1));
+                    System.out.println("Player " + player.getName() + " now has " + player.getHandSize() + " cards.");
+                }
+                break;
+
+            case "Quest":
+                // Offer sponsorship for a quest
+                System.out.println("A Quest card has been drawn! Offering sponsorship...");
+                boolean sponsorshipAccepted = isSponsorshipOffered();
+                if (!sponsorshipAccepted) {
+                    System.out.println("No players accepted the sponsorship for the quest.");
+                } else {
+                    System.out.println("Quest sponsorship has been accepted.");
+                }
+                break;
+
+            default:
+                System.out.println("Unknown event card: " + cardType);
+                break;
+        }
     }
 
     public boolean isSponsorshipOffered(){
         Player current = getCurrentPlayer();
-        //Scanner scanner = new Scanner(System.in);  // Create a scanner object to read input
+        Scanner scanner = new Scanner(System.in);
         for(Player p : players){
             if(!p.equals(current)) {
                 //Prompt player if they wish to sponsor
                 System.out.println(p.getName() + ", Do you want to sponsor the event? Y/N");
-                String input = System.console().readLine();
-                //System.out.println(opt);
-                //String input = scanner.nextLine();
+                //String input = System.console().readLine();
+                String input = scanner.nextLine();
                 if (input.equalsIgnoreCase("Y")) {
-                    //player wishes to sponsor, return true
+                    //player wants to sponsor, return true
                     return true;
                 }
             }
         }
         return false; //no one sponsor
+    }
+
+    private void setCurrentPlayer(){
+        currentPlayer++;
+        if(currentPlayer > 3){
+            currentPlayer = 0;
+        }
+    }
+
+    public void nextPlayerTurn(){
+
+    }
+
+    public void endTurn(){
+        //logic to end player turn
+
+        //set next player
+        setCurrentPlayer();
     }
 
 }
