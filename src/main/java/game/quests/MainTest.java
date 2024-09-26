@@ -3,6 +3,7 @@ package game.quests;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayInputStream;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +85,7 @@ public class MainTest {
         System.out.println("R3 - Adventure Deck Shuffle Passed.");
 
 
-        //checking if event deck shuffle works
+        //R3 - checking if event deck shuffle works
         Deck eveDeck = game.getEventDeck();
         eveDeck.shuffle();
         n = 0;
@@ -121,12 +122,14 @@ public class MainTest {
         }else if(card.getType().equals("Prosperity")){
             System.out.print("R3, Checking if Prosperity card effect works: ");
             for (Player player : game.getPlayers()) {
-                assertTrue(currentPlayer.getHandSize() <= 12);
+                assertTrue(player.getHandSize() <= 12);
             }
             System.out.println("Passed.");
 
         }else if (card.getType().equals("Q")){
             System.out.println("R3, Checking if Quest card offers sponsorship: ");
+            String simulatedInput = "N\nN\nN\nY\n";//"Y\n";
+            System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
             assertTrue(game.isSponsorshipOffered());
             System.out.println("Passed.");
 
@@ -162,6 +165,42 @@ public class MainTest {
             game.endTurn();
             currentPlayer = game.getCurrentPlayer();
         }
+    }
+
+    @Test
+    @DisplayName("R5 - Enforce hand size limit by trimming cards")
+    void R_5_test() {
+        Game game = new Game(4, true);
+
+        Player currentPlayer = game.getCurrentPlayer();
+        //print player hand size before adding
+        System.out.println("Printing " + currentPlayer.getName() + " number of cards before adding: "+currentPlayer.getHandSize());
+
+        //Simulate the player drawing enough cards to exceed the hand limit
+        List<Card> drawnCards = game.getAdventureDeck().draw(2);
+
+        //Add cards to the player's hand
+        game.addCardsToCurrentPlayerHand(drawnCards);
+
+        //get player hand size after adding
+        int playerHandSize = currentPlayer.getHandSize();
+        //print player hand size after adding
+        System.out.println("Printing " + currentPlayer.getName() + " number of cards after adding: "+currentPlayer.getHandSize());
+        assertTrue(currentPlayer.getHandSize() > 12);
+
+        if(currentPlayer.getHandSize() > game.getMaxHandSize()){
+            int cardsToTrim = playerHandSize - game.getMaxHandSize();
+            //trim player hand with print
+            game.trimPlayerHand(cardsToTrim);
+            System.out.println("Checking if player hand size is equal to max hand size after trim.");
+            assertEquals(game.getMaxHandSize(), currentPlayer.getHandSize());
+        }
+        System.out.println("Printing " + currentPlayer.getName() + " number cards after trimming: "+currentPlayer.getHandSize());
+        System.out.print("R5, Checking if the player's hand size exceeds the limit: ");
+        assertFalse(currentPlayer.getHandSize() > 12);
+        System.out.println("Player's hand size is " + currentPlayer.getHandSize() + " (expected 12).");
+
+
     }
 
 
