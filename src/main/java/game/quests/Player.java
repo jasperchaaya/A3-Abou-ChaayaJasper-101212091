@@ -1,12 +1,11 @@
 package game.quests;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Player {
     private final String name;
-    private final List<Card> hand = new ArrayList<>();
+    private List<Card> hand = new ArrayList<>();
     private final int maxHandSize;
     private int numShields;
 
@@ -23,6 +22,10 @@ public class Player {
             }
         }
 
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     public void printHand() {
@@ -51,12 +54,18 @@ public class Player {
     }
 
     public void addCard(Card card){
-        if(hand.size() < maxHandSize){
-            hand.add(card);
-        }
+        //if(hand.size() < maxHandSize){
+        hand.add(card);
     }
 
-    public Card drawCard(Card expected){
+    public Card removeCardAtIndex(int index){
+        if(!hand.isEmpty() && index < hand.size()){
+            return hand.remove(index);
+        }
+        return null;
+    }
+
+    public Card playCard(Card expected){
         List<Card> filtered = hand.stream()
                 .filter(p -> p.getType().equals(expected.getType()))
                 .sorted((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue()))
@@ -73,7 +82,17 @@ public class Player {
         }
         return null;
     }
-    public String getName(){
-        return this.name;
+
+    //this function return the indexes of the cards player wish to give up
+    public List<Integer> trimHand(int numberOfCards){
+        List<Integer> trimmed = new ArrayList<>();
+        //sort the list so smaller cards first
+        hand = hand.stream().sorted((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).collect(Collectors.toList());
+        //pick element from top
+        for(int n=0;n<numberOfCards;n++){
+            trimmed.add(n);
+        }
+        return trimmed;
     }
+
 }

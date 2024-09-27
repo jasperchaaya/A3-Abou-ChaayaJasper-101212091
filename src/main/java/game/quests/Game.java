@@ -45,6 +45,10 @@ public class Game {
         return adventureDeck.size();
     }
 
+    public int getMaxHandSize(){
+        return maxHandSize;
+    }
+
     private void addAdventureCards(List<Card> deck, String type, int value, int count) {
         for (int i = 0; i < count; i++) {
             deck.add(new Card(type, value));
@@ -176,16 +180,19 @@ public class Game {
     public boolean isSponsorshipOffered(){
         Player current = getCurrentPlayer();
         Scanner scanner = new Scanner(System.in);
-        for(Player p : players){
-            if(!p.equals(current)) {
-                //Prompt player if they wish to sponsor
-                System.out.println(p.getName() + ", Do you want to sponsor the event? Y/N");
-                //String input = System.console().readLine();
-                String input = scanner.nextLine();
-                if (input.equalsIgnoreCase("Y")) {
-                    //player wants to sponsor, return true
-                    return true;
-                }
+        for(int n=0;n<players.length;n++){
+            Player p = getCurrentPlayer();
+            //Prompt player if they wish to sponsor
+            System.out.println(p.getName() + ", Do you want to sponsor the event? Y/N");
+            //String input = System.console().readLine();
+            String input = scanner.nextLine();
+            if (input.equalsIgnoreCase("Y")) {
+                System.out.println("User input Y");
+                //player wants to sponsor, return true
+                return true;
+            }else{
+                System.out.println("User input N");
+                setCurrentPlayer();//set current player to next
             }
         }
         return false; //no one sponsor
@@ -207,6 +214,23 @@ public class Game {
 
         //set next player
         setCurrentPlayer();
+    }
+
+    public boolean canPlayerTakeCard(Player currentPlayer) {
+        return currentPlayer.getHandSize() < maxHandSize;
+    }
+
+    public void trimPlayerHand(int numberOfCards){
+        List<Integer> toTrim = players[currentPlayer].trimHand(numberOfCards);
+        for(int n : toTrim){
+            System.out.println("Trim: "+players[currentPlayer].removeCardAtIndex(n));
+        }
+    }
+
+    public void addCardsToCurrentPlayerHand(List<Card> drawnCards){
+        for(int i = 0;i<drawnCards.size();i++) {
+            players[currentPlayer].addCard(drawnCards.get(i));
+        }
     }
 
 }
