@@ -240,12 +240,12 @@ public class MainTest {
 
         game.getCurrentPlayer().addCard(new Card("Q", 3));
 
-        // Remove the Quest card from the player's hand and simulate starting the quest
+        //Remove the Quest card from the player's hand and simulate starting the quest
         Card c = game.getCurrentPlayer().removeCardAtIndex(game.getCurrentPlayer().getHandSize()-1);
         System.out.println(c.toString());
 
-        // Simulate the player accepting sponsorship for the quest
-        String simulatedInputSponsorship = "Y\n";  // Simulate input for accepting the quest
+        //Simulate the player accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
         System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
         if(game.isSponsorshipOffered()){
             String simulatedInput2 = "0\n4\n8\n";
@@ -253,7 +253,7 @@ public class MainTest {
             game.setStage(c);
             assertFalse(game.getGameStages().isEmpty());
 
-            //check if stage is set, end player turn to set next player
+            //Check if stage is set, end player turn to set next player
             System.out.println("Checking if the quest stages are set up correctly...");
             if(!game.getGameStages().isEmpty()){
                 game.endTurn();
@@ -262,7 +262,7 @@ public class MainTest {
                 String simulatedInputForAttack = "0\n1\n4\nquit\n";
                 System.setIn(new ByteArrayInputStream(simulatedInputForAttack.getBytes()));
 
-                // Call the playAttack method for the current player to simulate setting up the attack
+                //Call the playAttack method for the current player to simulate setting up the attack
                 game.playAttack();
 
                 int n = game.getCurrentPlayer().getHandSize();

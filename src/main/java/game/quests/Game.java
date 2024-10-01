@@ -210,7 +210,7 @@ public class Game {
         return gameStages;
     }
 
-    public void playTurn(Card card){
+    public void setStage(Card card){
         gameStages = new ArrayList<>();
         Scanner scanner = new Scanner(System.in);
 
@@ -275,6 +275,42 @@ public class Game {
         }
     }
 
+    public void playAttack() {
+        // play current player attack
+        List<Card> attackCards = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            players[currentPlayer].printHand();  // Display the player's hand
+            System.out.println("Enter the index of the card to include in the attack or type 'quit' to end:");
+            String input = scanner.nextLine();
+
+            if(input.equalsIgnoreCase("quit")){
+                break;  // End the attack setup
+            }
+
+            int choice = Integer.parseInt(input);
+            if(choice >= 0 && choice < players[currentPlayer].getHandSize()){
+                Card selectedCard = players[currentPlayer].getCardAtIndex(choice);
+                // Ensure the selected card is valid (non-repeated weapon card)
+                if(attackCards.contains(selectedCard)){
+                    System.out.println("This card has already been used. Please choose another card.");
+                }else{
+                    attackCards.add(selectedCard); // Add the card to the attack
+                    players[currentPlayer].removeCardAtIndex(choice);  // Remove the card from the player's hand
+                    System.out.println("Added card to attack: " + selectedCard);
+                }
+            }else{
+                System.out.println("Invalid index. Please try again.");
+            }
+
+            if(attackCards.size() >= gameStages.size()){
+                players[currentPlayer].addShields(gameStages.size());
+                break;
+            }
+        }
+        // After quitting, print the final attack setup
+        System.out.println("Final attack setup: " + attackCards);
+    }
 }
 
 
