@@ -233,6 +233,55 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("R7 - Player sets up a valid attack for a quest stage")
+    void R_7_test() {
+        Game game = new Game(4, true);
 
+        game.getCurrentPlayer().addCard(new Card("Q", 3));
+
+        // Remove the Quest card from the player's hand and simulate starting the quest
+        Card c = game.getCurrentPlayer().removeCardAtIndex(game.getCurrentPlayer().getHandSize()-1);
+        System.out.println(c.toString());
+
+        // Simulate the player accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";  // Simulate input for accepting the quest
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+        if(game.isSponsorshipOffered()){
+            String simulatedInput2 = "0\n4\n8\n";
+            System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
+            game.setStage(c);
+            assertFalse(game.getGameStages().isEmpty());
+
+            //check if stage is set, end player turn to set next player
+            System.out.println("Checking if the quest stages are set up correctly...");
+            if(!game.getGameStages().isEmpty()){
+                game.endTurn();
+
+                //Simulate the player setting up their attack for the quest stages
+                String simulatedInputForAttack = "0\n1\n4\nquit\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForAttack.getBytes()));
+
+                // Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+
+                int n = game.getCurrentPlayer().getHandSize();
+                System.out.println("R7 - Checking if current player did his attack");
+                assertEquals(9, n , "Expected 10 cards, found " + n + " cards." );
+                System.out.println("Passed.");
+
+                int s = game.getCurrentPlayer().getShields();
+                System.out.println("R7 - Checking if shields are given to player");
+                assertTrue(s > 0, "Expected more than 0 shields, found " + s + " shields.");
+                System.out.println("Passed.");
+
+                String m = game.getCurrentPlayer().getName();
+                System.out.println(m + " has " + s +" shields.");
+
+            }
+
+        }
+
+    }
 
 }
