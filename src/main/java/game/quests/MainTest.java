@@ -217,14 +217,22 @@ public class MainTest {
         if(game.isSponsorshipOffered()){
             String simulatedInput2 = "0\n4\n8\n";
             System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
-            game.playTurn(c);
+            game.setStage(c);
             System.out.print("R6 - Checking if Game Stages are set up:");
             assertFalse(game.getGameStages().isEmpty());
+            System.out.println("Passed.");
+
+            //Checking if the cards ar non-repeated and increasing value
+            System.out.print("R6 - Checking if the cards ar non-repeated and increasing value:");
+            Card firstCard = game.getGameStages().get(0);
+            Card secondCard = game.getGameStages().get(1);
+            assertTrue(secondCard.getValue() > firstCard.getValue(), "The second card must have a higher value than the first.");
             System.out.println("Passed.");
 
         }
 
     }
+
 
 
 }
