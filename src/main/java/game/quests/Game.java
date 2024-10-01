@@ -10,6 +10,7 @@ public class Game {
     private Player[] players;
     private int currentPlayer;
     private final int maxHandSize = 12;
+    private List<Card> gameStages = new ArrayList<>();
 
     public Game(int numberOfPlayers, boolean shuffle){
         currentPlayer = 0;
@@ -97,10 +98,10 @@ public class Game {
         List<Card> eventCards = new ArrayList<>();
 
         //Add Q cards (quests)
-        addEventCards(eventCards,"Q", 2, 3);  //3 Q2 cards with 2 stages
-        addEventCards(eventCards,"Q",3, 4);  //4 Q3 cards with 3 stages
-        addEventCards(eventCards,"Q",4, 3);  //3 Q4 cards with 4 stages
-        addEventCards(eventCards,"Q",5, 2);  //2 Q5 cards with 5 stages
+        addEventCards(eventCards,"Q",2,3); //3 Q2 cards with 2 stages
+        addEventCards(eventCards,"Q",3,4); //4 Q3 cards with 3 stages
+        addEventCards(eventCards,"Q",4,3); //3 Q4 cards with 4 stages
+        addEventCards(eventCards,"Q",5,2); //2 Q5 cards with 5 stages
 
         //Add E cards (events)
         addEventCards(eventCards, "Plague",0,1);        //Lose 2 shields
@@ -110,7 +111,7 @@ public class Game {
         return eventCards;
     }
 
-    public void initializePlayers(int numberOfPlayers) {
+    private void initializePlayers(int numberOfPlayers) {
         players = new Player[numberOfPlayers];
         for (int i = 0; i < numberOfPlayers; i++) {
             players[i] = new Player("Player " + (i + 1),adventureDeck.draw(12),maxHandSize);
@@ -205,7 +206,48 @@ public class Game {
         }
     }
 
-    public void nextPlayerTurn(){
+    public List<Card> getGameStages(){
+        return gameStages;
+    }
+
+    public void playTurn(Card card){
+        gameStages = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        int choice = -1;
+        players[currentPlayer].printHand();
+        for(int n = 0;n<card.getValue();n++) {
+            System.out.println("Enter the position of the next card to include in that stage or type 'quit' to end.");
+            String input = scanner.nextLine();
+
+            if(input.equalsIgnoreCase("quit")) {
+                if(gameStages.isEmpty()) {
+                    System.out.println("Stage can not be empty");
+                }else {
+                    return;
+                }
+            }else{
+                choice = Integer.parseInt(input);
+                //check if choice is valid index
+                if (choice >= 0 && choice < players[currentPlayer].getHandSize()) {
+                    System.out.println("Card at index " + choice + " selected");
+                    Card c = players[currentPlayer].getCardAtIndex(choice);
+                    if(gameStages.isEmpty() || c.getValue() > gameStages.getLast().getValue()){
+                        gameStages.add(c);
+                        players[currentPlayer].removeCardAtIndex(choice);
+                        System.out.println("Card " + c + " removed from player's hand");
+                        players[currentPlayer].printHand();
+                    }else{
+                        System.out.println("Insufficient value for this stage");
+                        n--;
+                    }
+
+
+                }
+            }
+
+
+        }
 
     }
 

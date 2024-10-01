@@ -21,7 +21,7 @@ public class Player {
                 hand.add(cards.get(i));
             }
         }
-
+        hand = hand.stream().sorted((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).collect(Collectors.toList());
     }
 
     public String getName(){
@@ -56,6 +56,13 @@ public class Player {
     public void addCard(Card card){
         //if(hand.size() < maxHandSize){
         hand.add(card);
+    }
+
+    public Card getCardAtIndex(int index){
+        if(!hand.isEmpty() && index < hand.size()){
+            return hand.get(index);
+        }
+        return null;
     }
 
     public Card removeCardAtIndex(int index){
