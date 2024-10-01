@@ -199,7 +199,30 @@ public class MainTest {
         System.out.print("R5, Checking if the player's hand size exceeds the limit: ");
         assertFalse(currentPlayer.getHandSize() > 12);
         System.out.println("Player's hand size is " + currentPlayer.getHandSize() + " (expected 12).");
+    }
 
+    @Test
+    @DisplayName("R6 - Checking quest stage set up by sponsor")
+    void R_6_test() {
+        Game game = new Game(4, true);
+
+        //simulating adding Q card to players hand
+        game.getCurrentPlayer().addCard(new Card("Q", 3));
+
+        Card c = game.getCurrentPlayer().removeCardAtIndex(game.getCurrentPlayer().getHandSize()-1);
+        System.out.println(c.toString());
+        String simulatedInput = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
+
+        if(game.isSponsorshipOffered()){
+            String simulatedInput2 = "0\n4\n8\n";
+            System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
+            game.playTurn(c);
+            System.out.print("R6 - Checking if Game Stages are set up:");
+            assertFalse(game.getGameStages().isEmpty());
+            System.out.println("Passed.");
+
+        }
 
     }
 
