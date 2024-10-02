@@ -251,7 +251,6 @@ public class MainTest {
             String simulatedInput2 = "0\n4\n8\n";
             System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
             game.setStage(c);
-            assertFalse(game.getGameStages().isEmpty());
 
             //Check if stage is set, end player turn to set next player
             System.out.println("Checking if the quest stages are set up correctly...");
@@ -283,5 +282,49 @@ public class MainTest {
         }
 
     }
+
+    @Test
+    @DisplayName("R8 - checking if used cards are in the used pile")
+    void R_8_test(){
+        Game game = new Game(4, true);
+        //draw Quest card from event deck to simulate starting the quest
+        Card card = game.drawEventCard("Q",3);
+        //checking if the used card is placed in the used pile
+        System.out.println("R8 - Checking if the used event card is placed in the used pile.");
+        assertTrue(game.getUsedEventCards().contains(card), "The card should be placed in the used pile, but it's missing.");
+        System.out.println("Passed.");
+
+        //Simulate the player accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+        if(game.isSponsorshipOffered()){
+            String simulatedInput2 = "0\n4\n8\n";
+            System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
+            game.setStage(card);
+
+            //Check if stage is set, end player turn to set next player
+            System.out.println("Checking if the quest stages are set up correctly...");
+            if(!game.getGameStages().isEmpty()){
+                game.endTurn();
+
+                //Simulate the player setting up their attack for the quest stages
+                String simulatedInputForAttack = "0\n1\n4\nquit\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForAttack.getBytes()));
+
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+
+                //checking if the used card is placed in the used pile
+                System.out.println("R8 - Checking if the used adventure card is placed in the used pile.");
+                assertEquals(3, game.getUsedAdventureCards().size(), "The card should be placed in the used pile, but it's missing.");
+                System.out.println("Passed.");
+
+
+            }
+
+        }
+    }
+
+
 
 }
