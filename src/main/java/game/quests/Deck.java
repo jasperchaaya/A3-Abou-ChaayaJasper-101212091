@@ -1,6 +1,7 @@
 package game.quests;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class Deck {
@@ -32,8 +33,8 @@ public class Deck {
 
     //Draw 1 card
     public Card draw() {
-        if (!cards.isEmpty()) {
-            return cards.removeFirst();
+        if (!this.cards.isEmpty()) {
+            return this.cards.removeFirst();
         }
         //Deck is empty
         return null;
@@ -46,6 +47,19 @@ public class Deck {
             drawnCards.add(draw());
         }
         return drawnCards;
+    }
+
+    // draw card based on type and value
+    public Card draw(String type, int value){
+        if(!this.cards.isEmpty()){
+            for(int n=0;n<this.cards.size();n++){
+                Card c = this.cards.get(n);
+                if(c.getType().equals(type) && c.getValue() == value){
+                    return this.cards.remove(n);
+                }
+            }
+        }
+        return null;
     }
 
     public void print(){

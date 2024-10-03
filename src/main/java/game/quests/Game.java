@@ -12,6 +12,10 @@ public class Game {
     private final int maxHandSize = 12;
     private List<Card> gameStages = new ArrayList<>();
 
+    //floor used cards
+    private List<Card> usedAdventureCards = new ArrayList<>();
+    private List<Card> usedEventCards = new ArrayList<>();
+
     public Game(int numberOfPlayers, boolean shuffle){
         currentPlayer = 0;
         initializeDecks();
@@ -296,6 +300,7 @@ public class Game {
                     System.out.println("This card has already been used. Please choose another card.");
                 }else{
                     attackCards.add(selectedCard); // Add the card to the attack
+                    addUsedAdventureCard(selectedCard);//add it ity to the used / floor cards
                     players[currentPlayer].removeCardAtIndex(choice);  // Remove the card from the player's hand
                     System.out.println("Added card to attack: " + selectedCard);
                 }
@@ -310,6 +315,32 @@ public class Game {
         }
         // After quitting, print the final attack setup
         System.out.println("Final attack setup: " + attackCards);
+    }
+
+    public List<Card> getUsedAdventureCards(){
+        return usedAdventureCards;
+    }
+    public List<Card> getUsedEventCards(){
+        return usedEventCards;
+    }
+    public void addUsedAdventureCard(Card card){
+        usedAdventureCards.add(card);
+    }
+    public void clearUsedAdventureCards(){
+        usedAdventureCards.clear();
+    }
+    public void clearUsedEventCards(){
+        usedEventCards.clear();
+    }
+
+    // draw card based on type and value
+    public Card drawEventCard(String type, int value){
+        Card card = eventDeck.draw(type,value);
+        if(card != null){
+            //add the removed card to the used list
+            usedEventCards.add(card);
+        }
+        return card;
     }
 }
 
