@@ -16,6 +16,8 @@ public class Game {
     private List<Card> usedAdventureCards = new ArrayList<>();
     private List<Card> usedEventCards = new ArrayList<>();
 
+    private Player stageOwner;
+
     public Game(int numberOfPlayers, boolean shuffle){
         currentPlayer = 0;
         initializeDecks();
@@ -130,49 +132,52 @@ public class Game {
         return players[currentPlayer];
     }
 
-    public void handleEvent(Card event) {
-        String cardType = event.getType();
+    public void handleEvent(Card card) {
+        String cardType = card.getType();
+        Player currentPlayer = getCurrentPlayer();
 
         switch (cardType) {
             case "Plague":
                 //Player will lose 2 shields
-                Player currentPlayer = getCurrentPlayer();
-                System.out.println("Player " + currentPlayer.getName() + " has drawn a Plague card!");
+                System.out.println(currentPlayer.getName() + " has drawn a Plague card!");
                 currentPlayer.addShields(Math.max(0, currentPlayer.getShields() - 2));      //Player can't have less than 0 shields
-                System.out.println("Player " + currentPlayer.getName() + " now has " + currentPlayer.getShields() + " shields.");
+                System.out.println(currentPlayer.getName() + " now has " + currentPlayer.getShields() + " shields.");
                 break;
 
             case "Queen's Favor":
                 //Player draws 2 A cards
-                currentPlayer = getCurrentPlayer();
-                System.out.println("Player " + currentPlayer.getName() + " has drawn a Queen's Favor!");
+                System.out.println(currentPlayer.getName() + " has drawn a Queen's Favor!");
                 List<Card> drawnCards = adventureDeck.draw(2);
                 currentPlayer.addCard(drawnCards.get(0));
                 currentPlayer.addCard(drawnCards.get(1));
-                System.out.println("Player " + currentPlayer.getName() + " now has " + currentPlayer.getHandSize() + " cards.");
+                System.out.println(currentPlayer.getName() + " now has " + currentPlayer.getHandSize() + " cards.");
                 break;
 
             case "Prosperity":
                 //All players draw 2 A cards
-                currentPlayer = getCurrentPlayer();
-                System.out.println("Player " + currentPlayer.getName() + " has drawn a Prosperity card!");
+                System.out.println(currentPlayer.getName() + " has drawn a Prosperity card!");
                 System.out.println("All players draw 2 Adventure cards!");
                 for (Player player : players) {
                     List<Card> advCards = adventureDeck.draw(2);
                     player.addCard(advCards.get(0));
                     player.addCard(advCards.get(1));
-                    System.out.println("Player " + player.getName() + " now has " + player.getHandSize() + " cards.");
+                    System.out.println(player.getName() + " now has " + player.getHandSize() + " cards.");
                 }
                 break;
 
+            case "Q":
             case "Quest":
                 // Offer sponsorship for a quest
                 System.out.println("A Quest card has been drawn! Offering sponsorship...");
                 boolean sponsorshipAccepted = isSponsorshipOffered();
                 if (!sponsorshipAccepted) {
-                    System.out.println("No players accepted the sponsorship for the quest.");
+                    System.out.println("player did not accept the sponsorship for the quest.");
                 } else {
                     System.out.println("Quest sponsorship has been accepted.");
+                    setStage(card);
+                    if(!gameStages.isEmpty()){
+                        stageOwner = getCurrentPlayer();
+                    }
                 }
                 break;
 
@@ -183,13 +188,11 @@ public class Game {
     }
 
     public boolean isSponsorshipOffered(){
-        Player current = getCurrentPlayer();
         Scanner scanner = new Scanner(System.in);
         for(int n=0;n<players.length;n++){
             Player p = getCurrentPlayer();
             //Prompt player if they wish to sponsor
             System.out.println(p.getName() + ", Do you want to sponsor the event? Y/N");
-            //String input = System.console().readLine();
             String input = scanner.nextLine();
             if (input.equalsIgnoreCase("Y")) {
                 System.out.println("User input Y");
@@ -245,14 +248,9 @@ public class Game {
                         System.out.println("Insufficient value for this stage");
                         n--;
                     }
-
-
                 }
             }
-
-
         }
-
     }
 
     public void endTurn(){
@@ -262,6 +260,16 @@ public class Game {
         setCurrentPlayer();
     }
 
+    private void endQuest(){
+        gameStages.clear();
+        stageOwner = null;
+        setCurrentPlayer();
+
+        System.out.println("\n End of quest summary:");
+        for (Player player : players){
+            System.out.println(player.getName() + " has " + player.getShields() + " shields.");
+        }
+    }
     public boolean canPlayerTakeCard(Player currentPlayer) {
         return currentPlayer.getHandSize() < maxHandSize;
     }
@@ -313,7 +321,7 @@ public class Game {
                 break;
             }
         }
-        // After quitting, print the final attack setup
+        //After quitting, print the final attack
         System.out.println("Final attack setup: " + attackCards);
     }
 
@@ -333,7 +341,7 @@ public class Game {
         usedEventCards.clear();
     }
 
-    // draw card based on type and value
+    //draw card based on type and value
     public Card drawEventCard(String type, int value){
         Card card = eventDeck.draw(type,value);
         if(card != null){
@@ -341,6 +349,58 @@ public class Game {
             usedEventCards.add(card);
         }
         return card;
+    }
+
+    private boolean checkForWinner() {
+        for (Player player : players) {
+            if (player.getShields() >= 7) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void playGame() {
+        Scanner scanner = new Scanner(System.in);
+        while (true) {
+            for (int n=0;n<players.length;n++) {
+                Player player = getCurrentPlayer();
+                String name = player.getName();
+                System.out.println("\nIt's " + name + "'s turn.");
+
+                if(getGameStages().isEmpty()) {
+                    player.printHand();
+                    System.out.println(name + " Press Enter to draw an event card...");
+                    String input = scanner.nextLine();
+
+                    Card eventCard = getEventDeck().draw();
+                    System.out.println(name + " drew: " + eventCard);
+
+                    handleEvent(eventCard);
+                }else{
+                    if(stageOwner != null && !stageOwner.equals(players[currentPlayer])){
+                        playAttack();
+                    }
+
+                    if (checkForWinner()) {
+                        System.out.println("\nCongratulations! " + name + " has won the game!");
+                        gameStages.clear();
+                        endQuest();
+                        return;
+                    }else{
+                        clearScreen();
+                    }
+                }
+                endTurn();
+            }
+            endQuest();
+        }
+
+    }
+
+    private static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
 }
 

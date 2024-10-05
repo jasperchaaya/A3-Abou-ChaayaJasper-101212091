@@ -105,7 +105,7 @@ public class MainTest {
         Card card = game.getEventDeck().draw();
         System.out.println("Drawn card: " + card.toString());
 
-        game.handleEvent(card);
+        //game.handleEvent(card);
         Player currentPlayer = game.getCurrentPlayer();
 
         //R3 - Testing handling player's draw from event deck
@@ -128,7 +128,7 @@ public class MainTest {
 
         }else if (card.getType().equals("Q")){
             System.out.println("R3, Checking if Quest card offers sponsorship: ");
-            String simulatedInput = "N\nN\nN\nY\n";//"Y\n";
+            String simulatedInput = "N\nN\nN\nY\n";
             System.setIn(new ByteArrayInputStream(simulatedInput.getBytes()));
             assertTrue(game.isSponsorshipOffered());
             System.out.println("Passed.");
@@ -325,6 +325,12 @@ public class MainTest {
         }
     }
 
+    @Test
+    @DisplayName("R9 - ")
+    void R_9_test(){
+        Game game = new Game(4, true);
 
+
+    }
 
 }

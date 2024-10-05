@@ -6,12 +6,10 @@ import java.util.stream.Collectors;
 public class Player {
     private final String name;
     private List<Card> hand = new ArrayList<>();
-    private final int maxHandSize;
     private int numShields;
 
     public Player(String playerName,List<Card> cards, int maxHandSize) {
         this.name = playerName;
-        this.maxHandSize = maxHandSize;
         this.numShields = 0;
         //if the list size is less or equal max add all, otherwise add only first 12 cards
         if(cards.size() <= maxHandSize){
@@ -29,7 +27,7 @@ public class Player {
     }
 
     public void printHand() {
-        System.out.println("Player: " + name );
+        System.out.println(name );
         System.out.println("-----------");
         for (Card card : hand) {
             System.out.println(card);
