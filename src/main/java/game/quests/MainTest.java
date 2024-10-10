@@ -224,8 +224,8 @@ public class MainTest {
 
             //Checking if the cards ar non-repeated and increasing value
             System.out.print("R6 - Checking if the cards ar non-repeated and increasing value:");
-            Card firstCard = game.getGameStages().get(0);
-            Card secondCard = game.getGameStages().get(1);
+            Card firstCard = game.getCurrentStage().get(0);
+            Card secondCard = game.getCurrentStage().get(1);
             assertTrue(secondCard.getValue() > firstCard.getValue(), "The second card must have a higher value than the first.");
             System.out.println("Passed.");
 
@@ -303,7 +303,6 @@ public class MainTest {
             game.setStage(card);
 
             //Check if stage is set, end player turn to set next player
-            System.out.println("Checking if the quest stages are set up correctly...");
             if(!game.getGameStages().isEmpty()){
                 game.endTurn();
 
@@ -326,11 +325,57 @@ public class MainTest {
     }
 
     @Test
-    @DisplayName("R9 - ")
+    @DisplayName("R9 - checking if quest is resolved and shields are given")
     void R_9_test(){
         Game game = new Game(4, true);
 
+        //simulate player drawing q 3 card
+        Card card = game.drawEventCard("Q",3);
+
+        //Simulate the player accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+
+        //setting up stages
+        if(game.isSponsorshipOffered()){
+            String simulatedInput2 = "0\n4\n8\n";
+            System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
+            game.setStage(card);
+
+            //Check if stage is set, end player turn to set next player
+            if(!game.getGameStages().isEmpty()) {
+                for(int n=0;n<3;n++) {
+                    //move to next player
+                    game.endTurn();
+
+                    //Simulate the player setting up their attack for the quest stages
+                    String simulatedInputForAllAttacks = "0\n1\n4\nquit";
+                    System.setIn(new ByteArrayInputStream(simulatedInputForAllAttacks.getBytes()));
+
+                    //Call the playAttack method for the current player to simulate setting up the attack
+                    game.playAttack();
+                }
+            }
+        }
+        //Check player shields
+        Player[] players = game.getPlayers();
+
+        int shields = players[0].getShields();
+        System.out.print("R9 - checking if player 1 does not have shields");
+        assertTrue(shields < 1, "Player 1 should have 0 shields, but has " + shields + ".");
+        System.out.println(": Passed");
+
+        //Check player 2,3,4
+        for(int n=1;n< players.length;n++) {
+            shields = players[n].getShields();
+            System.out.print("R9 - checking if "+players[n].getName()+" has shields");
+            assertTrue(shields > 0, players[n].getName()+" should have more than 0 shields, but has " + shields + ".");
+            System.out.println(": Passed");
+        }
 
     }
+
+
+
 
 }
