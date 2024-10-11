@@ -375,6 +375,56 @@ public class MainTest {
 
     }
 
+    @Test
+    @DisplayName("R10 - checking for winner after quest and ends game")
+    void R_10_test(){
+        Game game = new Game(4, true);
+
+        //simulate player drawing q 3 card
+        Card card = game.drawEventCard("Q",2);
+
+        Player[] players = game.getPlayers();
+        //adding shields to players so that we can get a winner just from 1 quest
+        players[2].addShields(5);
+        //players[3].addShields(5);
+
+        //Simulate the player accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+
+        //setting up stages
+        if(game.isSponsorshipOffered()){
+            String simulatedInput2 = "0\n2\n";
+            System.setIn(new ByteArrayInputStream(simulatedInput2.getBytes()));
+            game.setStage(card);
+
+            //Check if stage is set, end player turn to set next player
+            if(!game.getGameStages().isEmpty()) {
+                for(int n=0;n<3;n++) {
+                    //move to next player
+                    game.endTurn();
+
+                    //Simulate the player setting up their attack for the quest stages
+                    String simulatedInputForAllAttacks = "0\n4\nquit";
+                    System.setIn(new ByteArrayInputStream(simulatedInputForAllAttacks.getBytes()));
+
+                    //Call the playAttack method for the current player to simulate setting up the attack
+                    game.playAttack();
+                }
+            }
+        }
+
+        //print out shields
+        for (Player player : players){
+            System.out.println(player.getName() + " has " + player.getShields() + " shields.");
+        }
+
+        System.out.print("R10 - Checking if check for winner function works");
+        assertTrue(game.checkForWinner());
+        System.out.println(": Passed.");
+
+    }
+
 
 
 
