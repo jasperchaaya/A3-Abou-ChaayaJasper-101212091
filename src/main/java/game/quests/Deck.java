@@ -68,5 +68,9 @@ public class Deck {
         }
     }
 
+    public void clear(){
+        this.clear();
+    }
+
 }
 

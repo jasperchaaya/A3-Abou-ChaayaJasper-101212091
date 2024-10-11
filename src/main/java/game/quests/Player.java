@@ -19,7 +19,7 @@ public class Player {
                 hand.add(cards.get(i));
             }
         }
-        hand = hand.stream().sorted((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).collect(Collectors.toList());
+        sortHand();
     }
 
     public String getName(){
@@ -32,6 +32,10 @@ public class Player {
         for (Card card : hand) {
             System.out.println(card);
         }
+    }
+
+    public List<Card> getHand(){
+        return hand;
     }
 
     public int getHandSize() {
@@ -54,6 +58,7 @@ public class Player {
     public void addCard(Card card){
         //if(hand.size() < maxHandSize){
         hand.add(card);
+        sortHand();
     }
 
     public Card getCardAtIndex(int index){
@@ -68,6 +73,10 @@ public class Player {
             return hand.remove(index);
         }
         return null;
+    }
+
+    public void sortHand(){
+        hand = hand.stream().sorted((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).collect(Collectors.toList());
     }
 
     public Card playCard(Card expected){
@@ -99,5 +108,29 @@ public class Player {
         }
         return trimmed;
     }
+
+    public void clearHand(){
+        hand.clear();
+    }
+
+    public int calculateTotalAttackValue() {
+        return hand.stream()
+                .filter(card -> card.getType().equals("F") || card.getType().equals("W"))
+                .mapToInt(Card::getValue)
+                .sum();
+    }
+
+//    public boolean hasCard(Card card) {
+//        return hand.stream().anyMatch(c -> c.getType().equals(card.getType()) && c.getValue() == card.getValue());
+//    }
+//
+//    public Card playACard(Card card){
+//        for(Card c : hand){
+//            if(c.getType().equals(card.getType()) && c.getValue() == card.getValue()){
+//                return c;
+//            }
+//        }
+//        return null;
+//    }
 
 }
