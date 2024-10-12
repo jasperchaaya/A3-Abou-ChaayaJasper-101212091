@@ -62,44 +62,11 @@ public class MainTest {
         System.out.println("Expected 52, found " + remainingAdventureDeckSize);
     }
     @Test
-    @DisplayName("R3 - Checking if shuffle deck function works and event cards work.")
+    @DisplayName("R3 - Checking if event cards work.")
     void R_3_test() {
 
         //The game constructor will initialize decks and players
         Game game = new Game(4, false);
-
-        //shuffle the decks
-        Deck advDeck = game.getAdventureDeck();
-        advDeck.shuffle();
-
-        int n = 0;
-        //checking first 8 cards if still F5
-        List<Card> cards = advDeck.getCards();
-        for (int i = 0; i < 8; i++) {
-            if (cards.get(i).toString().equals("F 5")) {
-                n++;
-            }
-        }
-        //Check that not all 8 cards are "F 5"
-        assertNotEquals(8, n, "R3 - Adventure Deck Shuffle Failed.");
-        System.out.println("R3 - Adventure Deck Shuffle Passed.");
-
-
-        //R3 - checking if event deck shuffle works
-        Deck eveDeck = game.getEventDeck();
-        eveDeck.shuffle();
-        n = 0;
-        //checking first 8 cards if still F5
-        cards = eveDeck.getCards();
-        for (int i = 0; i < 3; i++) {
-            if (cards.get(i).toString().equals("Q 2")) {
-                n++;
-            }
-        }
-        //Check that not all 3 cards are "Q 2"
-        assertNotEquals(3, n, "R3 - Event Deck Shuffle Failed.");
-        System.out.println("R3 - Event Deck Shuffle Passed.");
-
 
         //R3 - Current player drawing from Event deck
         Card card = game.getEventDeck().draw();
@@ -426,6 +393,124 @@ public class MainTest {
     }
 
 
+    @Test
+    @DisplayName("R11 - testing deck shuffle functionality")
+    void R_11_test(){
+        Game game = new Game(4, true);
+
+        //shuffle the decks
+        Deck advDeck = game.getAdventureDeck();
+        advDeck.shuffle();
+
+        int n = 0;
+        //checking first 8 cards if still F5
+        List<Card> cards = advDeck.getCards();
+        for (int i = 0; i < 8; i++) {
+            if (cards.get(i).toString().equals("F 5")) {
+                n++;
+            }
+        }
+        //Check that not all 8 cards are "F 5"
+        System.out.println("R11 - Checking if adventure deck shuffled.");
+        assertNotEquals(8, n, "R11 - Adventure Deck Shuffle Failed.");
+        System.out.println("R11 - Adventure Deck Shuffle Passed.");
+
+
+        //R3 - checking if event deck shuffle works
+        Deck eveDeck = game.getEventDeck();
+        eveDeck.shuffle();
+        n = 0;
+        //checking first 8 cards if still F5
+        cards = eveDeck.getCards();
+        for (int i = 0; i < 3; i++) {
+            if (cards.get(i).toString().equals("Q 2")) {
+                n++;
+            }
+        }
+        //Check that not all 3 cards are "Q 2"
+        System.out.println("R11 - Checking if event deck shuffled.");
+        assertNotEquals(3, n, "R11 - Event Deck Shuffle Failed.");
+        System.out.println("R11 - Event Deck Shuffle Passed.");
+
+    }
+
+    @Test
+    @DisplayName("R12 - testing Plague effects")
+    void R_12_test(){
+        Game game = new Game(4, true);
+
+        //setting player 1 shields to 3 so that after plague, his shields will be 1
+        Player[] players = game.getPlayers();
+        players[0].addShields(3);
+        System.out.println("R12 - Player 1 has " + players[0].getShields() + " shields.");
+
+
+        Card card = game.drawEventCard("Plague",0);
+        game.handleEvent(card);
+
+        int shieldsPlayer1 = players[0].getShields();
+
+        System.out.print("R12 - checking if Player 1 has 1 shield");
+        assertEquals(1,shieldsPlayer1, "Player 1 should have 1 shield, but has " + shieldsPlayer1 + ".");
+        System.out.println(": Passed");
+
+    }
+
+    @Test
+    @DisplayName("R13 - testing Queen's Favor effects")
+    void R_13_test(){
+        Game game = new Game(4, true);
+
+        Player[] players = game.getPlayers();
+        players[0].clearHand();
+
+        Card card = game.drawEventCard("Queen's Favor",0);
+        game.handleEvent(card);
+
+        int player1HandSize = players[0].getHandSize();
+
+        System.out.print("R13 - checking if player 1 has received + 2 cards");
+        assertEquals(2, player1HandSize, "Player 1 should have 2 cards, but has " + player1HandSize + ".");
+        System.out.println(": Passed");
+    }
+
+    @Test
+    @DisplayName("R14 - testing Prosperity effects")
+    void R_14_test(){
+        Game game = new Game(4, true);
+
+        Player[] players = game.getPlayers();
+        //clearing hand and checking if players received + 2
+        players[0].clearHand();
+        players[1].clearHand();
+        players[2].clearHand();
+        players[3].clearHand();
+
+        Card card = game.drawEventCard("Prosperity",0);
+        game.handleEvent(card);
+
+        int player1HandSize = players[0].getHandSize();
+        int player2HandSize = players[1].getHandSize();
+        int player3HandSize = players[2].getHandSize();
+        int player4HandSize = players[3].getHandSize();
+
+
+        System.out.print("R14 - checking if player 1 has received + 2 cards");
+        assertEquals(2, player1HandSize, "Player 1 should have 2 cards, but has " + player1HandSize + ".");
+        System.out.println(": Passed");
+
+        System.out.print("R14 - checking if player 2 has received + 2 cards");
+        assertEquals(2, player2HandSize, "Player 2 should have 2 cards, but has " + player2HandSize + ".");
+        System.out.println(": Passed");
+
+        System.out.print("R14 - checking if player 3 has received + 2 cards");
+        assertEquals(2, player3HandSize, "Player 3 should have 2 cards, but has " + player3HandSize + ".");
+        System.out.println(": Passed");
+
+        System.out.print("R14 - checking if player 4 has received + 2 cards");
+        assertEquals(2, player4HandSize, "Player 4 should have 2 cards, but has " + player4HandSize + ".");
+        System.out.println(": Passed");
+    }
 
 
 }
