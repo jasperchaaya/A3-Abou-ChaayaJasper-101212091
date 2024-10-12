@@ -94,7 +94,7 @@ public class Game {
         addAdventureCards(adventureCards, "D",5,6);   //6 daggers with value 5
         addAdventureCards(adventureCards, "H",10,12); //12 horses with value 10
         addAdventureCards(adventureCards, "S",10,16); //16 swords
-        addAdventureCards(adventureCards, "B",15,8);  //8 battle-axes
+        addAdventureCards(adventureCards, "A",15,8);  //8 battle-axes
         addAdventureCards(adventureCards, "L",20,6);  //6 lances
         addAdventureCards(adventureCards, "E",30,2);  //2 excaliburs
 
@@ -268,13 +268,15 @@ public class Game {
     }
 
     public void endTurn(){
-        //logic to end player turn
-
         //set next player
         setCurrentPlayer();
     }
 
-    private void endQuest(){
+    public void endQuest(){
+        //stage setter, must pick same number of cards
+        for(int n=0;n<gameStages.getLast().size();n++){
+            stageOwner.addCard(adventureDeck.draw());
+        }
         stageOwner = null;
         setCurrentPlayer();
 
@@ -365,12 +367,7 @@ public class Game {
 
     //draw card based on type and value
     public Card drawEventCard(String type, int value){
-        Card card;
-        if(value > 0){
-            card = eventDeck.draw(type,value);
-        }else{
-            card = eventDeck.draw(type,0);
-        }
+        Card card = eventDeck.draw(type,value);
         if(card != null){
             //add the removed card to the used list
             usedEventCards.add(card);

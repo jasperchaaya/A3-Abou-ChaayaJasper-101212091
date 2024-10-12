@@ -54,8 +54,12 @@ public class Deck {
         if(!this.cards.isEmpty()){
             for(int n=0;n<this.cards.size();n++){
                 Card c = this.cards.get(n);
-                if(c.getType().equals(type) && c.getValue() == value){
-                    return this.cards.remove(n);
+                if(value > 0) {
+                    if (c.getType().equals(type) && c.getValue() == value) {
+                        return this.cards.remove(n);
+                    }
+                }else if (c.getType().equals(type)){
+                        return this.cards.remove(n);
                 }
             }
         }
