@@ -264,6 +264,9 @@ public class Game {
                 System.out.println("Stage can not be empty");
             }
         }
+        if (stageOwner == null) {
+            stageOwner = getCurrentPlayer();
+        }
         gameStages.add(stage);
     }
 
