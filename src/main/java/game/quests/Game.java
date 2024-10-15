@@ -271,6 +271,9 @@ public class Game {
     }
 
     public void endTurn(){
+        //clear screen so next player can't see previous players cards
+        clearScreen();
+
         //set next player
         setCurrentPlayer();
     }
@@ -289,10 +292,6 @@ public class Game {
         }
         gameStages.add(new ArrayList<>());
     }
-
-//    public boolean canPlayerTakeCard(Player currentPlayer) {
-//        return currentPlayer.getHandSize() < maxHandSize;
-//    }
 
     private void trimPlayerHand(){
         if(players[currentPlayer].getHandSize() > maxHandSize){
@@ -393,6 +392,9 @@ public class Game {
             for (int n=0;n<players.length;n++) {
                 Player player = getCurrentPlayer();
                 String name = player.getName();
+
+
+
                 System.out.println("\nIt's " + name + "'s turn.");
 
                 List<Card> currentStage = getCurrentStage();
@@ -430,7 +432,7 @@ public class Game {
     }
 
     private static void clearScreen() {
-        System.out.print("\033[H\033[2J");
+        System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
         System.out.flush();
     }
     private void cleanup(){
