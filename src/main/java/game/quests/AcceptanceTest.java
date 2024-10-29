@@ -54,14 +54,14 @@ public class AcceptanceTest {
 
         //Setup for Player 3
         players[2].clearHand();
-        playerAddCards(players[2],"F",5,3);
-        playerAddCards(players[2],"F",15,2);
-        playerAddCards(players[2],"F",30,1);
-        playerAddCards(players[2],"F",40,1);
-        playerAddCards(players[2],"L",20,1);
-        playerAddCards(players[2],"S",10,2);
-        playerAddCards(players[2],"H",10,1);
-        playerAddCards(players[2],"F",50,1);
+        playerAddCards(players[2], "F", 5, 3);
+        playerAddCards(players[2], "F", 15, 2);
+        playerAddCards(players[2], "F", 30, 1);
+        playerAddCards(players[2], "F", 40, 1);
+        playerAddCards(players[2], "L", 20, 1);
+        playerAddCards(players[2], "S", 10, 2);
+        playerAddCards(players[2], "H", 10, 1);
+        playerAddCards(players[2], "F", 50, 1);
 
 
         //Setup for Player 4

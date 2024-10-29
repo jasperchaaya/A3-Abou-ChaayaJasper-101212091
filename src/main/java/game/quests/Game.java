@@ -20,6 +20,14 @@ public class Game {
     private Player stageOwner;
     Scanner scanner;
 
+    //default constructor
+    public Game(){
+        currentPlayer = 0;
+        initializeDecks();
+        adventureDeck.shuffle();
+        eventDeck.shuffle();
+        initializePlayers(4);
+    }
     public Game(int numberOfPlayers, boolean shuffle){
         currentPlayer = 0;
         initializeDecks();
@@ -268,6 +276,7 @@ public class Game {
             stageOwner = getCurrentPlayer();
         }
         gameStages.add(stage);
+        clearQuestWinners();
     }
 
     public void endTurn(){
@@ -286,10 +295,11 @@ public class Game {
         stageOwner = null;
         setCurrentPlayer();
 
-        System.out.println("\n End of quest summary:");
+        System.out.println("\n**End of quest summary**");
         for (Player player : players){
             System.out.println(player.getName() + " has " + player.getShields() + " shields.");
         }
+        printQuestWinner();
         gameStages.add(new ArrayList<>());
     }
 
@@ -344,6 +354,7 @@ public class Game {
             List<Card> stage = getCurrentStage();
             if(attackCards.size() >= stage.size()){
                 players[currentPlayer].addShields(stage.size());
+                players[currentPlayer].setQuestWinner(true);
                 break;
             }
         }
@@ -447,6 +458,20 @@ public class Game {
         }catch(Exception _){
         }
 
+    }
+
+    public void printQuestWinner(){
+        for(Player player : players){
+            if(player.getQuestWinner()){
+                System.out.println("Quest Winner: " + player.getName());
+            }
+        }
+    }
+
+    public void clearQuestWinners(){
+        for(Player player : players){
+            player.setQuestWinner(false);
+        }
     }
 }
 

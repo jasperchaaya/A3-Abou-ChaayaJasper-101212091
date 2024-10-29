@@ -7,6 +7,7 @@ public class Player {
     private final String name;
     private List<Card> hand = new ArrayList<>();
     private int numShields;
+    private Boolean questWinner;
 
     public Player(String playerName,List<Card> cards, int maxHandSize) {
         this.name = playerName;
@@ -20,6 +21,7 @@ public class Player {
             }
         }
         sortHand();
+        this.questWinner = false;
     }
 
     public String getName(){
@@ -118,6 +120,12 @@ public class Player {
                 .filter(card -> card.getType().equals("F") || card.getType().equals("W"))
                 .mapToInt(Card::getValue)
                 .sum();
+    }
+    public boolean getQuestWinner(){
+        return this.questWinner;
+    }
+    public void setQuestWinner(boolean questWinner){
+        this.questWinner = questWinner;
     }
 
 //    public boolean hasCard(Card card) {
