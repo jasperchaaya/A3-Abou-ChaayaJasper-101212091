@@ -128,6 +128,9 @@ public class Player {
         this.questWinner = questWinner;
     }
 
+
+
+
 //    public boolean hasCard(Card card) {
 //        return hand.stream().anyMatch(c -> c.getType().equals(card.getType()) && c.getValue() == card.getValue());
 //    }

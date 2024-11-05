@@ -10,6 +10,7 @@ public class Game {
     private Player[] players;
     private int currentPlayer;
     private final int maxHandSize = 12;
+    private final int maxShields = 7;
     //private List<Card> gameStages = new ArrayList<>();
     private List<List<Card>> gameStages = new ArrayList<>();
 
@@ -390,7 +391,7 @@ public class Game {
 
     public boolean checkForWinner() {
         for (Player player : players) {
-            if (player.getShields() >= 7) {
+            if (player.getShields() >= maxShields) {
                 return true;
             }
         }
@@ -472,6 +473,10 @@ public class Game {
         for(Player player : players){
             player.setQuestWinner(false);
         }
+    }
+
+    public boolean isWinner(int playerIndex){
+        return players[playerIndex - 1].getShields() >= maxShields;
     }
 }
 

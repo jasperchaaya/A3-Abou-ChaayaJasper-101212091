@@ -10,5 +10,4 @@ import io.cucumber.junit.CucumberOptions;
         glue = "game.quests",
         features = "src/main/test/resources")
 public class RunCucumberTest {
-
 }
