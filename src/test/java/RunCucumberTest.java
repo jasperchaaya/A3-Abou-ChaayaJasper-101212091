@@ -4,10 +4,7 @@ import io.cucumber.junit.CucumberOptions;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        monochrome = true,
-        dryRun = false,
         plugin = {"pretty"},
-        glue = "game.quests",
-        features = "src/main/test/resources")
+        features = "src/test/resources")
 public class RunCucumberTest {
 }

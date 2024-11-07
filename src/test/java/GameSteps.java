@@ -132,7 +132,7 @@ public class GameSteps {
         }
     }
 
-    //Q2
+    //Q2 1st quest
     @When("the first of two games is played where there are two quest winners and game winners")
     public void the_first_of_two_games_is_played_where_there_are_two_quest_winners_and_game_winners(){
         //Setup for Player 1
@@ -229,8 +229,8 @@ public class GameSteps {
         }
     }
 
-    //Q2
-    @When("the second of two games is played where there are two quest winners and game winners")
+    //Q2 2nd quest
+    @Then("the second of two games is played where there are two quest winners and game winners")
     public void the_second_of_two_games_is_played_where_there_are_two_quest_winners_and_game_winners(){
 
         //simulate player drawing q 3 card
@@ -281,6 +281,149 @@ public class GameSteps {
             }
         }
     }
+
+    //Q3 1st quest
+    @When("the first of two quests is played to have 3 winners")
+    public void the_first_of_two_quests_is_played_to_have_3_winners(){
+
+        //setting up player 1 hand
+        players[0].clearHand();
+        playerAddCards(players[0], "F", 5, 2);
+        playerAddCards(players[0], "F", 10, 2);
+        playerAddCards(players[0], "F", 15, 2);
+        playerAddCards(players[0], "F", 30, 1);
+        playerAddCards(players[0], "H", 10, 1);
+        playerAddCards(players[0], "A", 15, 2);
+        playerAddCards(players[0], "L", 20, 2);
+
+
+        //simulate player drawing q 3 card
+        Card card = game.drawEventCard("Q", 4);
+
+        //Simulate player 1 accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+
+        //setting up stages
+        if (game.isSponsorshipOffered()) {
+            String simulatedInputP1 = "0\n3\n4\n6\n";
+            System.setIn(new ByteArrayInputStream(simulatedInputP1.getBytes()));
+            game.setStage(card);
+
+            //Check if stage is set, end player turn to set next player
+            if (!game.getGameStages().isEmpty()) {
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 2 setting up their attack for the quest stages
+                String simulatedInputForP2Attacks = "1\n3\n3\n6\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP2Attacks.getBytes()));
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 3 setting up their attack for the quest stages
+                String simulatedInputForP3Attacks = "1\n3\n3\n6\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP3Attacks.getBytes()));
+
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 4 setting up their attack for the quest stages
+                String simulatedInputForP4Attacks = "1\n3\n3\n6\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP4Attacks.getBytes()));
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                game.endQuest();
+
+            }
+        }
+    }
+
+    //Q3 2nd quest
+    @Then("the second of two quests is played")
+    public void the_second_of_two_quests_is_played(){
+
+        //simulate player drawing q 3 card
+        Card card = game.drawEventCard("Q", 3);
+
+        //Simulate player 1 accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+
+        //setting up stages
+        if (game.isSponsorshipOffered()) {
+            String simulatedInputP1 = "0\n6\n8\n";
+            System.setIn(new ByteArrayInputStream(simulatedInputP1.getBytes()));
+            game.setStage(card);
+
+            //Check if stage is set, end player turn to set next player
+            if (!game.getGameStages().isEmpty()) {
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 2 setting up their attack for the quest stages
+                String simulatedInputForP2Attacks = "1\n3\n6\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP2Attacks.getBytes()));
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 3 setting up their attack for the quest stages
+                String simulatedInputForP3Attacks = "1\n3\n3\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP3Attacks.getBytes()));
+                //Call the playAttack method for th current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 4 setting up their attack for the quest stages
+                String simulatedInputForP4Attacks = "quit\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP4Attacks.getBytes()));
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                game.endQuest();
+
+            }
+        }
+    }
+
+
+    //Q3 p2 draws Plague event card
+    @Then("Player 2 draws a Plague card")
+    public void player_2_draws_a_plague_card(){
+        Card card = game.drawEventCard("Plague",0);
+        game.handleEvent(card);
+        game.endTurn();
+    }
+
+    //Q3 p3 draws Prosperity event card
+    @Then("Player 3 draws a Prosperity card")
+    public void player_3_draws_a_Prosperity_card(){
+        Card card = game.drawEventCard("Prosperity",0);
+        game.handleEvent(card);
+        game.endTurn();
+    }
+
+    //Q3 p4 gets Queen’s Favor event card
+    @Then("Player 4 draws a Queen's Favor card")
+    public void player_4_draws_a_plague_card(){
+        Card card = game.drawEventCard("Queen's Favor",0);
+        game.handleEvent(card);
+        game.endTurn();
+    }
+
 
 
     @Then("Player {int} should have {int} Adventure Cards")

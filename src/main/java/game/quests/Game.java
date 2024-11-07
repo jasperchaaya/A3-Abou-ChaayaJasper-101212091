@@ -173,8 +173,8 @@ public class Game {
                     List<Card> advCards = adventureDeck.draw(2);
                     player.addCard(advCards.get(0));
                     player.addCard(advCards.get(1));
+                    trimPlayerHand(player);
                     System.out.println(player.getName() + " now has " + player.getHandSize() + " cards.");
-                    trimPlayerHand();
                 }
                 break;
 
@@ -317,6 +317,13 @@ public class Game {
         }
     }
 
+    public void trimPlayerHand(Player player){
+        List<Integer> toTrim = player.trimHand(player.getHandSize() - maxHandSize);
+        for(int n : toTrim){
+            System.out.println("Trim: "+player.removeCardAtIndex(n));
+        }
+    }
+
     public void addCardsToCurrentPlayerHand(List<Card> drawnCards){
         for(int i = 0;i<drawnCards.size();i++) {
             players[currentPlayer].addCard(drawnCards.get(i));
@@ -404,8 +411,6 @@ public class Game {
             for (int n=0;n<players.length;n++) {
                 Player player = getCurrentPlayer();
                 String name = player.getName();
-
-
 
                 System.out.println("\nIt's " + name + "'s turn.");
 
