@@ -424,6 +424,71 @@ public class GameSteps {
         game.endTurn();
     }
 
+    //Q4
+    @When("the quest is played where no one wins")
+    public void the_quest_is_played_where_no_one_wins(){
+
+        //setting up player 1 hand
+        players[0].clearHand();
+        playerAddCards(players[0], "F", 5, 2);
+        playerAddCards(players[0], "F", 10, 2);
+        playerAddCards(players[0], "F", 15, 2);
+        playerAddCards(players[0], "F", 30, 1);
+        playerAddCards(players[0], "H", 10, 1);
+        playerAddCards(players[0], "A", 15, 2);
+        playerAddCards(players[0], "L", 20, 2);
+
+
+
+        //simulate player drawing q 2 card
+        Card card = game.drawEventCard("Q", 2);
+
+        //Simulate player 1 accepting sponsorship for the quest
+        String simulatedInputSponsorship = "Y\n";
+        System.setIn(new ByteArrayInputStream(simulatedInputSponsorship.getBytes()));
+
+        //setting up stages
+        if (game.isSponsorshipOffered()) {
+            String simulatedInputP1 = "0\n5\n";
+            System.setIn(new ByteArrayInputStream(simulatedInputP1.getBytes()));
+            game.setStage(card);
+
+            //Check if stage is set, end player turn to set next player
+            if (!game.getGameStages().isEmpty()) {
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 2 setting up their attack for the quest stages
+                String simulatedInputForP2Attacks = "quit\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP2Attacks.getBytes()));
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 3 setting up their attack for the quest stages
+                String simulatedInputForP3Attacks = "quit\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP3Attacks.getBytes()));
+
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+
+                //move to next player
+                game.endTurn();
+
+                //Simulate player 4 setting up their attack for the quest stages
+                String simulatedInputForP4Attacks = "quit\n";
+                System.setIn(new ByteArrayInputStream(simulatedInputForP4Attacks.getBytes()));
+                //Call the playAttack method for the current player to simulate setting up the attack
+                game.playAttack();
+                //move to next player
+                game.endTurn();
+
+                game.endQuest();
+
+            }
+        }
+    }
 
 
     @Then("Player {int} should have {int} Adventure Cards")
@@ -457,12 +522,6 @@ public class GameSteps {
         assertEquals(expectedShields, players[playerIndex - 1].getShields(), "Player " + playerIndex + " did not have the correct number of shields.");
     }
 
-    @Then("Player {int} should have {int} cards in hand")
-    public void player_should_have_cards_in_hand(int playerIndex, int expectedHandSize) {
-        assertEquals(expectedHandSize,
-                players[playerIndex - 1].getHandSize(),
-                "Player " + playerIndex + " did not have the correct number of cards in hand.");
-    }
 
     @Then("Player {int} wins the quest")
     public void player_wins_the_quest(int playerIndex) {
