@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quests Game</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="container">
+    <input type="hidden" id="StageOwner" value=""/>
+    <h1>Welcome to Quests game</h1>
+    <button id="start-game" onclick="startGame()">Start Game</button>
+    <button id="reset-game" onclick="resetGame()">Reset Game</button>
+    <div>
+        <button id="draw-btn" onclick="draw()" disabled>Draw</button>
+        <button id="yes-btn" onclick="yes()" disabled>Yes</button>
+        <button id="no-btn" onclick="no()" disabled>No</button>
+        <button id="setStage-btn" onclick="setStage()" disabled>Set Stage</button>
+        <button id="playAttack-btn" onclick="playAttack()" disabled>Play Attack</button>
+        <button id="skipAttack-btn" onclick="skipAttack()" disabled>Skip Attack</button>
+    </div>
+
+    <div id="game-status"></div>
+    <div id="player-hand">
+        <h3 id="player">Player's Hand:</h3>
+        <label for="cards"></label><select id="cards" multiple></select>
+    </div>
+    <div id="player-shields">
+        <h3>Players Shields</h3>
+        <span id="shields"></span>
+    </div>
+
+    <div id="scenario-box">
+        <h2>Scenarios for testing</h2>
+        <h4>Click these scenarios to set up the cards for the scenario before playing.</h4>
+        <button id="scenario1-btn" onclick="runScenario1()">Scenario 1</button>
+        <button id="scenario2-btn" onclick="runScenario2()">Scenario 2</button>
+        <button id="scenario3-btn" onclick="runScenario3()">Scenario 3</button>
+        <button id="scenario4-btn" onclick="runScenario4()">Scenario 4</button>
+        <button id="allHands-btn" onclick="displayAllHands()">Display All Hands</button>
+
+    </div>
+    <div id="all-player-hands" style="display: none;"></div>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
