@@ -4,7 +4,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class QuestsGamePage {
 
@@ -98,24 +100,33 @@ public class QuestsGamePage {
         wait.until(ExpectedConditions.elementToBeClickable(allHandsBtn)).click();
     }
 
-    // Method to select multiple cards by values
+    //select multiple cards by values
     public void selectMultipleCards(List<String> cards) {
-        WebElement dropdownElement = driver.findElement(playerHandDropdown); // Locate the dropdown element
+        WebElement dropdownElement = driver.findElement(playerHandDropdown);
 
-        for (String cardText : cards) {
-            List<WebElement> options = dropdownElement.findElements(By.tagName("option")); // Locate all options
+        Map<String, Integer> cardCount = new HashMap<>();
+        for (String card : cards) {
+            cardCount.put(card, cardCount.getOrDefault(card, 0) + 1);
+        }
 
+        List<WebElement> options = dropdownElement.findElements(By.tagName("option")); // Locate all options
+        for (Map.Entry<String, Integer> entry : cardCount.entrySet()) {
+            String cardText = entry.getKey();
+            int occurrences = entry.getValue();
+
+            int selectedCount = 0;
             for (WebElement option : options) {
-                if (option.getText().equals(cardText)) {
-                    if (!option.isSelected()) {
-                        // Use JavaScript to select the option
-                        ((JavascriptExecutor) driver).executeScript("arguments[0].selected = true;", option);
+                if (option.getText().equals(cardText) && !option.isSelected()) {
+                    //Use JavaScript to select the option
+                    ((JavascriptExecutor) driver).executeScript("arguments[0].selected = true;", option);
+                    selectedCount++;
+
+                    if (selectedCount == occurrences) {
+                        break;
                     }
-                    break;
                 }
             }
         }
-
     }
 
     //select multiple cards by index of select
@@ -139,7 +150,7 @@ public class QuestsGamePage {
 
 
 
-    //methods to fetch game status or player hand
+    //methods to get game status or player hand
     public String getGameStatus() {
         return wait.until(ExpectedConditions.visibilityOfElementLocated(gameStatus)).getText();
     }

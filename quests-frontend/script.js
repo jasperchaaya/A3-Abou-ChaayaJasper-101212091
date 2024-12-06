@@ -182,9 +182,7 @@ async function draw() {
                 appendStat("\nDo you wish to sponsor? Yes/No");
                 document.getElementById("yes-btn").disabled = false;
                 document.getElementById("no-btn").disabled = false;
-
             }
-
         }
     } catch (error) {
         console.error("Error drawing event card:", error);

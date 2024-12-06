@@ -19,6 +19,7 @@ public class Game {
     private List<Card> usedEventCards = new ArrayList<>();
 
     private Player stageOwner;
+    private int stageLevel = 0;
     Scanner scanner;
 
     //default constructor
@@ -302,6 +303,7 @@ public class Game {
         }
         gameStages.add(stage);
         clearQuestWinners();
+        setStageLevel(card.getValue());
     }
 
     public void endTurn(){
@@ -313,9 +315,12 @@ public class Game {
 
     public void endQuest(){
         //stage setter, must pick same number of cards
-        //for(int n=0;n<gameStages.getLast().size();n++){
-        for(int n=0;n<gameStages.get(gameStages.size()-1).size();n++){
-            stageOwner.addCard(adventureDeck.draw());
+        //for(int n=0;n<gameStages.get(gameStages.size()-1).size();n++){
+        int required = getCurrentStage().size();
+        for(int n=0;n<required;n++){
+            if(stageOwner.getHandSize() < maxHandSize){
+                stageOwner.addCard(adventureDeck.draw());
+            }
         }
         stageOwner = null;
         setCurrentPlayer();
@@ -505,12 +510,6 @@ public class Game {
         }
     }
 
-    public void clearQuestWinners(){
-        for(Player player : players){
-            player.setQuestWinner(false);
-        }
-    }
-
     public boolean isWinner(int playerIndex){
         return players[playerIndex - 1].getShields() >= maxShields;
     }
@@ -541,12 +540,20 @@ public class Game {
         }
     }
 
-    public void addCardToAdventureDeck(Card card) {
-        if (eventDeck != null && card != null) {
-            eventDeck.addCard(card);
-            System.out.println("Added card to event deck: " + card);
+    public void addCardToAdventureDeck(List<Card> cards) {
+        if (adventureDeck != null && cards != null) {
+            adventureDeck.addCards(cards);
+            System.out.println("Added card to event deck: " + cards);
         } else {
             System.out.println("Error: Event deck or card is null.");
+        }
+    }
+
+    public void setStageLevel(int StageLevel){this.stageLevel = StageLevel;}
+    public int getStageLevel(){return this.stageLevel;}
+    public void clearQuestWinners(){
+        for (Player player : players) {
+            player.setQuestWinner(false);
         }
     }
 }

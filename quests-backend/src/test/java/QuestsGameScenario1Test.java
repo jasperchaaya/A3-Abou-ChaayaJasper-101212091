@@ -146,22 +146,26 @@ public class QuestsGameScenario1Test {
         System.out.println("*Checking if player 4 has won the quest*");
         assertTrue(questsGamePage.getGameStatus().contains("Quest Winner: Player 4"), "Player 4 did not win quest.");
 
-        //Asserting cards TODO MAKE DIV TO DISPLAY ALL PLAYER CARDS AND A METHOD THAT GETS THEM
+        //Asserting cards
         System.out.println("*Checking if player 1 has the correct cards*");
-        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 1: F 5,F 10,F 10,F 15,F 15,A 15,A 15,L 20,L 20,F 30,F 30"),
-                "Player 1 did not have the correct cards.");
+//        String[] myArray = questsGamePage.getAllPlayerHandText().split("\n");
+//        String[] hand1 = myArray[1].replace("Player 1: ","").split(",");
+//        System.out.println(Arrays.toString(hand1));
+
+
+        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 1 Number of Cards (12): F 5,F 5,F 10,F 10,F 15,F 15,A 15,A 15,L 20,L 20,L 20,F 30"),"Player 1 did not have the correct cards.");
 
         System.out.println("*Checking if player 2 has the correct cards*");
-        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 2: F 5,F 5,F 10,S 10,H 10,H 10,F 15,F 20,L 20,F 20,L 20,F 30,F 60"),
-                "Player 2 did not have the correct cards.");
+        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 2 Number of Cards (12): F 5,F 5,D 5,D 5,S 10,S 10,H 10,H 10,F 20,L 20,L 20,F 60"),"Player 2 did not have the correct cards.");
 
         System.out.println("*Checking if player 3 has the correct cards*");
-        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 3: F 5,F 5,S 10,H 10,F 10,F 15,F 15,L 20,F 30,F 40,F 50"),
-                "Player 3 did not have the correct cards.");
+        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 3 Number of Cards (12): F 5,F 5,S 10,H 10,F 15,F 15,A 15,L 20,F 30,F 30,F 40,F 50"),"Player 3 did not have the correct cards.");
 
         System.out.println("*Checking if player 4 has the correct cards*");
-        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 4: F 10,H 10,F 15,F 15,A 15,L 20,F 40,F 50,F 70"),
-                "Player 4 did not have the correct cards.");
+        assertTrue(questsGamePage.getAllPlayerHandText().contains("Player 4 Number of Cards (12): F 10,F 10,F 10,F 15,A 15,A 15,L 20,L 20,E 30,F 30,F 50,F 70"),"Player 4 did not have the correct cards.");
+
+
+
     }
 
 //    @AfterEach

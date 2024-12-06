@@ -84,7 +84,7 @@ public class QuestsController {
     }
 
     @PostMapping("/setStage")
-    public ResponseEntity<String> setStage(@RequestParam String sessionId, String selected) {
+    public ResponseEntity<String> setStage(@RequestParam String sessionId,@RequestParam String selected) {
         Game game = gameCache.get(sessionId);
         if (game == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Game has not been started");
@@ -95,20 +95,18 @@ public class QuestsController {
             List<Card> stage = new ArrayList<>();
             System.out.println("stage owner: " + game.getStageOwner());//or player
             int[] intArray = Arrays.stream(selected.split(",")).mapToInt(Integer::parseInt).toArray();
+            System.out.println(Arrays.toString(intArray));
             for (int j : intArray) {
                 Card c = player.getCardAtIndex(j);
                 stage.add(c);
-                player.removeCardAtIndex(j);
             }
             game.addGameStage(stage);
 
-            //force draw to all players except stage owner
-            for(Player p : game.getPlayers()){
-                if(!p.equals(player)){
-                    p.addCard(game.getAdventureDeck().draw());
-                    game.trimPlayerHand(p);
-                }
-            }
+            for(Card c : stage){player.removeCard(c);}
+
+            System.out.println(player.getHandSize());
+            player.printHand();
+            System.out.println(stage);
 
             game.endTurn();
             //get info for next player
@@ -158,11 +156,15 @@ public class QuestsController {
             // remove played cards from the player's hand
             for (int index : intArray) {
                 player.removeCardAtIndex(index);
+                player.addCard(game.getAdventureDeck().draw());
             }
+            game.trimPlayerHand(player);
+
             // Check if attack setup satisfies the stage
             if (attackCards.size() >= game.getCurrentStage().size()) {
-                player.addShields(game.getCurrentStage().size()); // Award shields
-                player.setQuestWinner(true);     // Set quest winner
+                //player.addShields(game.getCurrentStage().size()); // Award shields
+                player.addShields(game.getStageLevel()); // Award shields
+                player.setQuestWinner(true); // Set quest winner
             }
 
             // Prepare response with updated hand
@@ -185,9 +187,6 @@ public class QuestsController {
                     result.append("\n").append(gameWinners);
                 }
             }else {
-//                game.getCurrentPlayer().addCard(game.getAdventureDeck().draw());
-//                game.trimPlayerHand(game.getCurrentPlayer());
-
                 result.append('\n').append(game.getCurrentPlayer().getName()).append(" turn, select cards to attack|");
                 result.append(getHand(game));
             }
@@ -266,6 +265,9 @@ public class QuestsController {
             Card drawnCard = game.getEventDeck().draw();
             if (drawnCard == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No cards left in the event deck.");
+            }
+            if(drawnCard.getType().equals("Q")){
+                game.setStageLevel(drawnCard.getValue());
             }
             game.addUsedEventCard(drawnCard);
             gameCache.put(sessionId, game);
@@ -351,6 +353,7 @@ public class QuestsController {
             if(p.getQuestWinner()){
                 result.append("Quest Winner: ").append(p.getName()).append("\n");
             }
+            p.setQuestWinner(false);
         }
         return result.toString();
     }
@@ -418,12 +421,38 @@ public class QuestsController {
         game.playerAddCards(players[3],"E",30,1);
         game.playerAddCards(players[3],"A",15,2);
 
-        //SUPPOSED TO PUT THESE CARDS AT THE TOP
+        //setting event cards
         game.clearEventDeck();
         game.addCardToEventDeck(new Card("Q", 4));
 
+        //setting adventure deck
         game.clearAdventureDeck();
-        game.addCardToAdventureDeck(new Card("Q", 2));
+        List<Card> cards = new ArrayList<Card>();
+
+        cards.add(new Card("F", 30));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("A", 15));
+
+        cards.add(new Card("F", 10));
+        cards.add(new Card("L", 20));
+        cards.add(new Card("L", 20));
+
+        cards.add(new Card("F", 30));
+        cards.add(new Card("L", 20));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+
+
+        game.addCardToAdventureDeck(cards);
 
         return ResponseEntity.ok("SUCCESS");
     }
@@ -465,22 +494,62 @@ public class QuestsController {
 
         //Setup for Player 4
         players[3].clearHand();
-        game.playerAddCards(players[3], "F", 50, 1);
-        game.playerAddCards(players[3], "F", 70, 1);
-        game.playerAddCards(players[3], "H", 10, 2);
-        game.playerAddCards(players[3], "L", 20, 2);
-        game.playerAddCards(players[3], "S", 10, 3);
-        game.playerAddCards(players[3], "A", 15, 2);
-        game.playerAddCards(players[3], "E", 30, 1);
+        game.playerAddCards(players[3], "F", 5, 1);
+        game.playerAddCards(players[3], "F", 50,1);
+        game.playerAddCards(players[3], "H", 10,2);
+        game.playerAddCards(players[3], "L", 20,2);
+        game.playerAddCards(players[3], "S", 10,3);
+        game.playerAddCards(players[3], "A", 15,2);
+        game.playerAddCards(players[3], "E", 30,1);
 
         game.clearEventDeck();
         game.addCardToEventDeck(new Card("Q", 4));
         game.addCardToEventDeck(new Card("Q", 3));
 
+        game.clearAdventureDeck();
+        List<Card> cards = new ArrayList<Card>();
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("F", 40));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 30));
+        cards.add(new Card("F", 30));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 30));
+        //2nd quest
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 30));
+        cards.add(new Card("L", 20));
+        
+        game.addCardToAdventureDeck(cards);
+        
+        
 
+        //must save the game state back to session
+        gameCache.put(sessionId, game);
 
         return ResponseEntity.ok("SUCCESS");
-
     }
 
     @PostMapping("/setUpScenario3")
@@ -537,8 +606,91 @@ public class QuestsController {
         game.addCardToEventDeck(new Card("Q", 4));
         game.addCardToEventDeck(new Card("Plague", 0));
         game.addCardToEventDeck(new Card("Prosperity", 0));
-        game.addCardToEventDeck(new Card("Queen’s favor", 0));
+        game.addCardToEventDeck(new Card("Queen's Favor", 0));
         game.addCardToEventDeck(new Card("Q", 3));
+
+        //setting adventure deck
+        game.clearAdventureDeck();
+        List<Card> cards = new ArrayList<Card>();
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 25));
+
+        cards.add(new Card("H", 10));
+        cards.add(new Card("S", 10));
+
+        cards.add(new Card("A", 15));
+        cards.add(new Card("F", 40));
+
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+
+        cards.add(new Card("F", 30));
+        cards.add(new Card("F", 25));
+
+        cards.add(new Card("A", 15));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("F", 50));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("F", 40));
+        cards.add(new Card("F", 50));
+
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+
+        cards.add(new Card("F", 35));
+
+        //draws prosperity
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 10));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+
+        //queens favor
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 15));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 20));
+        cards.add(new Card("F", 25));
+        cards.add(new Card("F", 30));
+        cards.add(new Card("L", 20));
+
+        game.addCardToAdventureDeck(cards);
 
         return ResponseEntity.ok("SUCCESS");
     }
@@ -599,6 +751,32 @@ public class QuestsController {
         game.clearEventDeck();
         game.addCardToEventDeck(new Card("Q", 2));
 
+        //setting adventure deck
+        game.clearAdventureDeck();
+        List<Card> cards = new ArrayList<Card>();
+
+        cards.add(new Card("F", 5));
+//        cards.add(new Card("F", 15));
+//        cards.add(new Card("F", 10));
+
+
+        cards.add(new Card("F", 15));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("D", 5));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("H", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("S", 10));
+        cards.add(new Card("F", 5));
+        cards.add(new Card("F", 10));
+
+        game.addCardToAdventureDeck(cards);
+
         return ResponseEntity.ok("SUCCESS");
     }
 
@@ -608,9 +786,9 @@ public class QuestsController {
         if (game == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Game has not been started");
         }
-        StringBuilder result = new StringBuilder("<h3>All Player Hands</h3><ul>");
+        StringBuilder result = new StringBuilder("<h3>All Player's Hands</h3><ul>");
         for(Player player:game.getPlayers()){
-            result.append("<li>").append(player.getName()).append(": ");
+            result.append("<li>").append(player.getName()).append(" Number of Cards (").append(player.getHandSize()).append("): ");
             for (Card c : player.getHand()) {
                 result.append(c.toString()).append(",");
             }

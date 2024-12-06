@@ -77,6 +77,12 @@ public class Player {
         return null;
     }
 
+    public void removeCard(Card card){
+        if(!hand.isEmpty()){
+            hand.remove(card);
+        }
+    }
+
     public void sortHand(){
         hand = hand.stream().sorted((p1, p2) -> Integer.compare(p1.getValue(), p2.getValue())).collect(Collectors.toList());
     }
@@ -121,13 +127,10 @@ public class Player {
                 .mapToInt(Card::getValue)
                 .sum();
     }
-    public boolean getQuestWinner(){
-        return this.questWinner;
-    }
+    public boolean getQuestWinner(){return this.questWinner;}
     public void setQuestWinner(boolean questWinner){
         this.questWinner = questWinner;
     }
-
 
 
 
