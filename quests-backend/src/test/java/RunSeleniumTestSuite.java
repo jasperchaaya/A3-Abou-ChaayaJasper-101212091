@@ -7,7 +7,7 @@ import org.junit.platform.suite.api.Suite;
         QuestsGameScenario1Test.class,
         QuestsGameScenario2Test.class,
         QuestsGameScenario3Test.class,
-        QuestsGameScenario3Test.class
+        QuestsGameScenario4Test.class
 
 })
 public class RunSeleniumTestSuite {}
